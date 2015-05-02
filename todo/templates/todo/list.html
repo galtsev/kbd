@@ -1,0 +1,58 @@
+{% extends "todo/base.html" %}
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'todo/todo_list.css' %}" />
+    <script src="{% static 'todo/todo_list.js' %}" ></script>
+    <script>
+        view_status = "{{ view_status }}";
+    </script>
+{% endblock %}
+
+{% block body %}
+    <div class="content">
+    <h2>todo list</h2>
+    <div class="toolbox">
+        <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#addnew">New</button>
+        <span class="btn-group">
+            <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">View <span class="caret"></span></button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="list?status=all">all</a></li>
+                <li><a href="list?status=backlog">backlog</a></li>
+                <li><a href="list?status=in+process">in process</a></li>
+                <li><a href="list?status=hold">hold</a></li>
+                <li><a href="list?status=closed">closed</a></li>
+            </ul>
+        </span>
+
+    </div>
+    <div class="collapse" id="addnew">
+        <form action="add_new" method="POST">
+            {% csrf_token %}
+            {{ form.description }}<br/>
+            {{ form.status }}
+            <input type="submit" value="submit" />
+        </form>
+    </div>
+    {% for task in tasks %}
+        <div class="task" data-id="{{ task.id }}">
+            <div>
+                    <div class="btn-group">
+                        <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Mark as <span class="caret"></span></button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#" data-status="backlog">backlog</a></li>
+                            <li><a href="#" data-status="in process">in process</a></li>
+                            <li><a href="#" data-status="hold">hold</a></li>
+                            <li><a href="#" data-status="closed">closed</a></li>
+                        </ul>
+                    </div>
+            </div>
+            <div class="description">{{ task.description|linebreaks }}</div>
+            <div class="attrs">
+                <span style="float:left;">{{ task.date_created|date:"Y-m-d H:i" }}</span>
+                <span style="float:right;">{{ task.status }}</span>
+            </div>
+            <div style="clear:both;"></div>
+        </div>
+    {% endfor %}
+    </div>
+{% endblock %}

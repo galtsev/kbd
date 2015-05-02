@@ -1,0 +1,29 @@
+<html>
+<head>
+    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script>
+        function updateTime() {
+            $.get("get_time", function (data) {
+                $("#time").html(data);
+            });
+        }
+
+        $(function () {
+            setInterval(updateTime, 1000);
+        });
+    </script>
+    <style>
+        .clock {
+            font-size: 4em;
+            width: 30%;
+            margin: 3em auto;
+            letter-spacing: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="clock">
+        <span id="time">Undefined</span>
+    </div>
+</body>
+</html>

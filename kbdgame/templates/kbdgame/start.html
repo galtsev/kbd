@@ -1,0 +1,10 @@
+<html>
+<body>
+    <h2>Start page</h2>
+    <form action="start" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Start" />
+    </form>
+</body>
+</html>

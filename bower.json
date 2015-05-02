@@ -1,0 +1,19 @@
+{
+  "name": "kbd",
+  "version": "1.0",
+  "authors": [
+    "Denis Galtsev <galtsevdv@gmail.com>"
+  ],
+  "description": "misc django",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.4"
+  }
+}

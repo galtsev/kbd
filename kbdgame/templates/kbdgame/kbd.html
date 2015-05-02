@@ -1,0 +1,58 @@
+<html>
+<head>
+    <style>
+        .input {
+            margin: 2em;
+            padding: 1em;
+        }
+    </style>
+    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script>
+        expected = {{ expect }};
+        function upd() {
+            expected = Math.floor(Math.random()*12);
+            $("#vv").val(expected);
+        }
+        function cl2(v) {
+            if (v==expected) {
+                upd();
+            }
+            console.log(v);
+        }
+        function cl(v) {
+            $.post('check', JSON.stringify({v:v}), function (data) {
+                if (data.status=='OK') {
+                    $('#vv').val(data.expect);
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <div>
+        <h2>Hello {{ name }}</h2>
+        <input id="vv" type="text" value="{{ expect }}"/>
+        <table>
+            <tr>
+                <td><input class="input" type="button" value="0" onclick="cl(0);"/></td>
+                <td><input class="input" type="button" value="1" onclick="cl(1);"/></td>
+                <td><input class="input" type="button" value="2" onclick="cl(2);"/></td>
+                <td><input class="input" type="button" value="3" onclick="cl(3);"/></td>
+            </tr>
+            <tr>
+                <td><input class="input" type="button" value="4" onclick="cl(4);"/></td>
+                <td><input class="input" type="button" value="5" onclick="cl(5);"/></td>
+                <td><input class="input" type="button" value="6" onclick="cl(6);"/></td>
+                <td><input class="input" type="button" value="7" onclick="cl(7);"/></td>
+            </tr>
+            <tr>
+                <td><input class="input" type="button" value="8" onclick="cl(8);"/></td>
+                <td><input class="input" type="button" value="9" onclick="cl(9);"/></td>
+                <td><input class="input" type="button" value="10" onclick="cl(10);"/></td>
+                <td><input class="input" type="button" value="11" onclick="cl(11);"/></td>
+            </tr>
+        </table>
+    </div>
+    <a href="finish">Finish</a>
+</body>
+</html>

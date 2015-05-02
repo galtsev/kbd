@@ -1,0 +1,53 @@
+{% extends "boots/base.html" %}
+{% block head %}
+<style>
+    .box {
+        border: 1px dotted;
+    }
+</style>
+{% endblock %}
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 box">
+            <ul class="nav nav-tabs">
+                <li><a href="#">One</a></li>
+                <li><a href="#">Two</a></li>
+                <li><a href="#">Long menu item</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <!-- left column -->
+        <div class="col-md-4 box">
+            <ul>
+                <li>one</li>
+                <li>two</li>
+                <li>three</li>
+            </ul>
+            <div>
+                <a class="btn btn-default" href="#">Home</a>
+                <span class="btn-group">
+                    <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">One</a></li>
+                        <li><a href="#">Two</a></li>
+                    </ul>
+                </span>
+            </div>
+            <p>
+                Curabitur tristique magna ligula, in finibus mi tempor vel. Suspendisse posuere neque diam, et pulvinar magna egestas non. Vestibulum efficitur arcu vel facilisis iaculis. Duis id neque nec arcu ultricies sollicitudin non et neque. 
+                <blockquote>
+                Vivamus lacinia condimentum purus at rutrum. Quisque luctus convallis viverra. 
+                </blockquote>
+                Maecenas consectetur eleifend ligula quis sollicitudin. Morbi ac porta arcu, sed laoreet dolor. Vivamus vestibulum sollicitudin metus, vitae elementum diam mollis ut. Donec convallis lacus nulla, vitae malesuada lacus facilisis in. Nulla facilisi. Sed dapibus vehicula lacus, ac porttitor nisi consectetur quis. Cras ac ex a ligula cursus pretium eget vel sem. Proin imperdiet massa eu libero finibus luctus. Nulla facilisi. Pellentesque ut eros non purus commodo vehicula.
+            </p>
+        </div>
+
+        <!-- right column -->
+        <div class="col-md-8 box">
+            <p>Curabitur tristique magna ligula, in finibus mi tempor vel. Suspendisse posuere neque diam, et pulvinar magna egestas non. Vestibulum efficitur arcu vel facilisis iaculis. Duis id neque nec arcu ultricies sollicitudin non et neque. Vivamus lacinia condimentum purus at rutrum. Quisque luctus convallis viverra. Maecenas consectetur eleifend ligula quis sollicitudin. Morbi ac porta arcu, sed laoreet dolor. Vivamus vestibulum sollicitudin metus, vitae elementum diam mollis ut. Donec convallis lacus nulla, vitae malesuada lacus facilisis in. Nulla facilisi. Sed dapibus vehicula lacus, ac porttitor nisi consectetur quis. Cras ac ex a ligula cursus pretium eget vel sem. Proin imperdiet massa eu libero finibus luctus. Nulla facilisi. Pellentesque ut eros non purus commodo vehicula.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
