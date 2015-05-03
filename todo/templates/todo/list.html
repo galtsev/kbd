@@ -26,7 +26,7 @@
     <div class="toolbox">
         <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#addnew">New</button>
         <span class="btn-group">
-            <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">View <span class="caret"></span></button>
+            <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{ view_status }} <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu">
                 <li><a href="list?status=all">all</a></li>
                 <li><a href="list?status=backlog">backlog</a></li>
@@ -47,7 +47,7 @@
         </form>
     </div>
     {% for task in tasks %}
-        <div class="task" data-id="{{ task.id }}">
+        <div id="task-{{ task.id }}" class="task" data-id="{{ task.id }}">
             <div>
                     <div class="btn-group">
                         <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Mark as <span class="caret"></span></button>
@@ -63,7 +63,7 @@
             <div class="description">{{ task.description|linebreaks }}</div>
             <div class="attrs">
                 <span style="float:left;">{{ task.date_created|date:"Y-m-d H:i" }}</span>
-                <span style="float:right;">{{ task.status }}</span>
+                <span class="task_status" style="float:right;">{{ task.status }}</span>
             </div>
             <div style="clear:both;"></div>
         </div>
