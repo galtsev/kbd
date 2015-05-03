@@ -30,5 +30,9 @@ def set_status(request):
     data = json.loads(request.body);
     task = models.Todo.objects.get(pk=data['id'])
     task.status = data['status']
+    task.full_clean()
     task.save()
     return HttpResponse('OK', content_type='text/plain')
+
+def test_me(request):
+    return HttpResponse('resp from srv', content_type='text/plain')

@@ -5,4 +5,5 @@ urlpatterns = patterns('',
     url(r'^list$', views.list),
     url(r'^add_new$', views.add_new),
     url(r'^set-status$', views.set_status),
+    url(r'^test_me$', views.test_me),
 )
