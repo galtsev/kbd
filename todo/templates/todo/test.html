@@ -1,0 +1,53 @@
+{% extends "todo/base.html" %}
+{% block head %}
+<script>
+function handleClick(e) {
+    console.log("click!");
+    console.log(e.target.id);
+    console.log(e);
+}
+$(function() {
+    $("#foo").click(handleClick);
+});
+</script>
+{% endblock %}
+{% block body %}
+<div id="foo">
+    div foo
+    <div id="bar">
+        div bar
+        <div id="baz">
+            div baz
+        </div>
+    </div>
+</div>
+<div id="example"></div>
+<script type="text/jsx">
+    var data = ["Dan", "John", "Henry"];
+    var TodoItem = React.createClass({
+        render: function() {
+            return (
+                <div>name: {this.props.name}</div>
+            );
+        }
+    });
+    var TodoList = React.createClass({
+        render: function () {
+            var ar = [];
+            for (var i=0;i<data.length;i++) {
+                ar.push(<TodoItem name={data[i]} />);
+            }
+            return (
+                <div className="TodoList">
+                    <h2>Here is my todolist</h2>
+                    {ar}
+                </div>
+            );
+        }
+    });
+    React.render(
+        <TodoList />,
+        document.getElementById('example')
+      );
+</script>
+{% endblock %}

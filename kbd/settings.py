@@ -20,6 +20,7 @@ BOWER_BASE = os.path.join(BASE_DIR, 'bower_components')
 STATICFILES_DIRS = [
     ('jquery', os.path.join(BOWER_BASE, 'jquery', 'dist')),
     ('bootstrap', os.path.join(BOWER_BASE, 'bootstrap', 'dist')),
+    ('reactjs', os.path.join(BOWER_BASE, 'react')),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 #defaults

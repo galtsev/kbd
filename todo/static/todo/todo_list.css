@@ -24,3 +24,12 @@
             width: 800px;
             margin: 0 auto;
         }
+        .float_left {
+            float: left;
+        }
+        .float_right {
+            float: right;
+        }
+        .clear_both {
+            clear: both;
+        }

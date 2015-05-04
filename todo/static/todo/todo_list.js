@@ -8,7 +8,7 @@ Server.prototype = {
         var self = this;
         return new Promise(function(resolve, reject){
             if (typeof data=="object") data = JSON.stringify(data);
-            $.post(self.api_base+'set-status', data)
+            $.post(self.api_base+url, data)
                 .done(function(response_data, textStatus, jqXHR){
                     if (jqXHR.status==200) {
                         resolve(response_data);
@@ -22,30 +22,30 @@ Server.prototype = {
 
         });
     },
+    get_promise: function(url, data) {
+        console.log('get_promise with data: '+data);
+        var self = this;
+        return new Promise(function(resolve, reject) {
+            $.get(self.api_base+url, data)
+                .done(function(response_data) {
+                    resolve(response_data);
+                })
+                .fail(function(jqXHR){
+                    reject(Error(jqXHR.statusText));
+                });
+        });
+    },
     set_status: function(id, status) {
         return this.post_promise('set-status', {id: id, status: status});
+    },
+    get_list: function(status) {
+        return this.get_promise('list_json', {status: status});
+    },
+    add_todo: function(form_data) {
+        return this.post_promise('add_todo', form_data);
     }
+
 }
 
 var srv = new Server('/todo/');
 
-function set_status(e) {
-    var id = $(e.target).parents('div.task').data('id');
-    var status = $(e.target).data('status');
-    srv.set_status(id, status).then(function(){
-        var task_selector = "#task-"+id;
-        if (status==view_status || view_status=='all') {
-            $(task_selector).find('span.task_status').text(status);
-        } else {
-            $(task_selector).remove();
-        }
-    }).catch(function(error){
-        var dialog = $("#msg");
-        dialog.find(".modal-body").text(error.message);
-        dialog.modal('show');
-    });
-}
-
-$(function () {
-    $("div.task li a").click(set_status);
-});
