@@ -7,6 +7,11 @@ function fmt_date(arg) {
     return dt.getFullYear() +'-'+f2(dt.getMonth()+1) +'-'+f2(dt.getDate()) + ' ' + dt.getHours() +':'+f2(dt.getMinutes()) +':'+f2(dt.getSeconds());
 }
 
+var ButtonToolbar = ReactBootstrap.ButtonToolbar;
+var Button = ReactBootstrap.Button;
+var SplitButton = ReactBootstrap.SplitButton;
+var MenuItem = ReactBootstrap.MenuItem;
+
 var Dropdown = React.createClass({
     render: function() {
         return (
@@ -41,18 +46,25 @@ var TodoItem = React.createClass({
             this.props.onItemDeleted(this.props.id);
         }.bind(this));
     },
+    newStatusClick: function(event) {
+        this.newStatusSelect('closed');
+    },
+    newStatusSelect: function(status) {
+        srv.set_status(this.props.id, status).then(function() {
+            this.props.onItemStatusUpdated(this.props.id, status);
+        }.bind(this));
+    },
     render: function() {
         return (
             <div className="task">
-            <div>
-                <Dropdown onSelect={this.handleStatusClick} caption="Mark as">
-                    <Dropdown.Item value="backlog">backlog</Dropdown.Item>
-                    <Dropdown.Item value="in process">in process</Dropdown.Item>
-                    <Dropdown.Item value="hold">hold</Dropdown.Item>
-                    <Dropdown.Item value="closed">closed</Dropdown.Item>
-                </Dropdown>
-                <button className="btn btn-default" type="button" onClick={this.handleDelete} >Delete</button>
-            </div>
+            <ButtonToolbar>
+                <SplitButton bsStyle="default" title="Done" onClick={this.newStatusClick} onSelect={this.newStatusSelect} >
+                    <MenuItem eventKey="backlog">backlog</MenuItem>
+                    <MenuItem eventKey="in process">in process</MenuItem>
+                    <MenuItem eventKey="hold">hold</MenuItem>
+                </SplitButton>
+                <Button bsStyle="default" onClick={this.handleDelete}>Delete</Button>
+            </ButtonToolbar>
             <div className="description">{this.props.description}</div>
             <div className="attrs">
                 <span className="float_left">{ fmt_date(this.props.date_created) }</span>
