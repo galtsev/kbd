@@ -21,8 +21,9 @@ STATICFILES_DIRS = [
     ('jquery', os.path.join(BOWER_BASE, 'jquery', 'dist')),
     ('bootstrap', os.path.join(BOWER_BASE, 'bootstrap', 'dist')),
     ('reactjs', os.path.join(BOWER_BASE, 'react')),
+    ('react-router', os.path.join(BOWER_BASE, 'react-router', 'build', 'umd')),
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static', 'static')
 #defaults
 
 
@@ -98,3 +99,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
+try:
+    from localsettings import *
+except ImportError:
+    pass
