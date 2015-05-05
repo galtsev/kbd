@@ -36,6 +36,11 @@ var TodoItem = React.createClass({
             self.props.onItemStatusUpdated(self.props.id, value);
         });
     },
+    handleDelete: function(event) {
+        srv.delete_task(this.props.id).then(function() {
+            this.props.onItemDeleted(this.props.id);
+        }.bind(this));
+    },
     render: function() {
         return (
             <div className="task">
@@ -46,6 +51,7 @@ var TodoItem = React.createClass({
                     <Dropdown.Item value="hold">hold</Dropdown.Item>
                     <Dropdown.Item value="closed">closed</Dropdown.Item>
                 </Dropdown>
+                <button className="btn btn-default" type="button" onClick={this.handleDelete} >Delete</button>
             </div>
             <div className="description">{this.props.description}</div>
             <div className="attrs">
@@ -87,6 +93,7 @@ var AppendForm = React.createClass({
             description: this.refs.description.getDOMNode().value
         };
         srv.add_todo(data).then(function(items) {
+            this.refs.description.getDOMNode().value='';
             this.props.afterAppend(items[0]);
         }.bind(this));
     },
@@ -143,6 +150,9 @@ var TodoList = React.createClass({
         if (task.fields.status==this.state.view_status || this.state.view_status=='all')
             this.setState({todos: [task].concat(this.state.todos)});
     },
+    handleTaskDeleted: function(id) {
+        this.setState({todos: this.state.todos.filter(function(todo){return todo.pk!=id;})});
+    },
     render: function() {
         var self = this;
         var items = this.state.todos.map(function(task) {
@@ -151,6 +161,7 @@ var TodoList = React.createClass({
                         date_created={task.fields.date_created} 
                         status={task.fields.status}
                         onItemStatusUpdated={self.itemStatusUpdated}
+                        onItemDeleted={self.handleTaskDeleted}
                         id={task.pk} 
                         key={task.pk} />;
         });

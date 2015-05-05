@@ -43,6 +43,9 @@ Server.prototype = {
     },
     add_todo: function(form_data) {
         return this.post_promise('add_todo', form_data);
+    },
+    delete_task: function(id) {
+        return this.post_promise('delete_task', {id: id});
     }
 
 }
