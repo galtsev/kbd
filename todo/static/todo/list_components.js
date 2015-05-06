@@ -66,16 +66,12 @@ var TodoItem = React.createClass({
         return this.props.status=='in process'?'closed':'in process';
     },
     render: function() {
-        var nextStatus = this.nextStatus();
-        var view_status = this.props.view_status;
-        var otherStatuses = ['backlog','in process', 'hold', 'closed'].filter(function(status) {return (status!=nextStatus && status!=view_status);});
+        var otherStatuses = ['backlog','in process', 'hold', 'closed'].filter(status => status!=this.nextStatus() && status!=this.props.view_status);
         return (
             <div className="task">
             <ButtonToolbar>
                 <SplitButton bsStyle="default" title={statusCaption(this.nextStatus())} onClick={this.newStatusClick} onSelect={this.newStatusSelect} >
-                {otherStatuses.map(function(status){
-                    return <MenuItem eventKey={status}>{statusCaption(status)}</MenuItem>;
-                })}
+                {otherStatuses.map(status => <MenuItem eventKey={status}>{statusCaption(status)}</MenuItem>)}
                 </SplitButton>
                 <Button bsStyle="default" onClick={this.handleDelete}>Delete</Button>
             </ButtonToolbar>

@@ -15,7 +15,7 @@ def list_json(request):
     tasks = models.Todo.objects
     if status!='all':
         tasks = tasks.filter(status=status)
-    tasks = tasks.order_by('-date_created')
+    tasks = tasks.order_by('-date_updated')
     data = serializers.serialize('json', tasks)
     return HttpResponse(data, content_type="application/json")    
 
@@ -45,6 +45,6 @@ def delete_task(request):
     models.Todo.objects.filter(pk=data['id']).delete()
     return HttpResponse('OK', content_type='text/plain')
 
-    
+
 def test_me(request):
     return HttpResponse('resp from srv', content_type='text/plain')
