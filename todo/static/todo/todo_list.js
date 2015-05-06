@@ -23,7 +23,7 @@ Server.prototype = {
         });
     },
     get_promise: function(url, data) {
-        console.log('get_promise with data: '+data);
+        console.log('get_promise with data: ', data);
         var self = this;
         return new Promise(function(resolve, reject) {
             $.get(self.api_base+url, data)
@@ -38,8 +38,8 @@ Server.prototype = {
     set_status: function(id, status) {
         return this.post_promise('set-status', {id: id, status: status});
     },
-    get_list: function(status) {
-        return this.get_promise('list_json', {status: status});
+    get_list: function(options) {
+        return this.get_promise('list_json', options);
     },
     add_todo: function(form_data) {
         return this.post_promise('add_todo', form_data);

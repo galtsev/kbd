@@ -9,8 +9,11 @@ function fmt_date(arg) {
 
 var ButtonToolbar = ReactBootstrap.ButtonToolbar;
 var Button = ReactBootstrap.Button;
+var DropdownButton = ReactBootstrap.DropdownButton;
 var SplitButton = ReactBootstrap.SplitButton;
 var MenuItem = ReactBootstrap.MenuItem;
+var Input = ReactBootstrap.Input;
+console.log(Input);
 
 var Dropdown = React.createClass({
     render: function() {
@@ -87,22 +90,19 @@ var TodoItem = React.createClass({
 });
 
 var Toolbar = React.createClass({
-    handleStatusClick: function(event) {
-        if (event.target.nodeName=='A' && $(event.target).data('value')) {
-            this.props.updateStatus($(event.target).data('value'));
-        }
+    newSelect: function(status) {
+        this.props.updateStatus({status: status, search_value: this.refs.search_value.getValue()});
     },
     render: function() {
+        var view_options = ['all', 'backlog', 'in process', 'hold', 'closed'];
         return (
             <div className="toolbox">
                 <button className="btn btn-default" type="button" data-toggle="collapse" data-target="#addnew2">New</button>
-                <Dropdown onSelect={this.handleStatusClick} caption={this.props.view_status}>
-                    <Dropdown.Item value="all">all</Dropdown.Item>
-                    <Dropdown.Item value="backlog">backlog</Dropdown.Item>
-                    <Dropdown.Item value="in process">in process</Dropdown.Item>
-                    <Dropdown.Item value="hold">hold</Dropdown.Item>
-                    <Dropdown.Item value="closed">closed</Dropdown.Item>
-                </Dropdown>
+                <DropdownButton title={statusCaption(this.props.view_status)} onSelect={this.newSelect}>
+                    {view_options.map(status=>
+                        <MenuItem eventKey={status}>{statusCaption(status)}</MenuItem>)}
+                </DropdownButton>
+                <Input type="text" ref="search_value" label="Search"/>
             </div>
         );
     }
@@ -161,10 +161,11 @@ var TodoList = React.createClass({
         }
         this.setState({todos:this.state.todos.filter(pred)});
     },
-    handleStatusUpdate: function(status){
+    handleStatusUpdate: function(options){
+        console.log("handleStatusUpdate called");
         var self=this;
-        srv.get_list(status).then(function(data){
-            self.setState({todos:data, view_status: status});
+        srv.get_list(options).then(function(data){
+            self.setState({todos:data, view_status: options.status});
         });
     },
     handleTaskAppended: function(task) {

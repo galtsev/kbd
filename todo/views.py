@@ -12,9 +12,12 @@ from todo import models, forms
 
 def list_json(request):
     status = request.GET.get('status', 'in process')
+    search_tag = request.GET.get('search_value')
     tasks = models.Todo.objects
     if status!='all':
         tasks = tasks.filter(status=status)
+    if search_tag:
+        tasks = tasks.filter(tag__tag=search_tag)
     tasks = tasks.order_by('-date_updated')
     data = serializers.serialize('json', tasks)
     return HttpResponse(data, content_type="application/json")    
