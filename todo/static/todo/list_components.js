@@ -33,6 +33,14 @@ Dropdown.Item = React.createClass({
     }
 });
 
+function upFirst(s) {
+    return s.charAt(0).toUpperCase()+s.slice(1).toLowerCase();
+}
+
+function statusCaption(status) {
+    return upFirst(status=='closed'?'done':status);
+}
+
 var TodoItem = React.createClass({
     handleStatusClick: function(event) {
         var self=this;
@@ -47,21 +55,27 @@ var TodoItem = React.createClass({
         }.bind(this));
     },
     newStatusClick: function(event) {
-        this.newStatusSelect('closed');
+        this.newStatusSelect(this.nextStatus());
     },
     newStatusSelect: function(status) {
         srv.set_status(this.props.id, status).then(function() {
             this.props.onItemStatusUpdated(this.props.id, status);
         }.bind(this));
     },
+    nextStatus: function() {
+        return this.props.status=='in process'?'closed':'in process';
+    },
     render: function() {
+        var nextStatus = this.nextStatus();
+        var view_status = this.props.view_status;
+        var otherStatuses = ['backlog','in process', 'hold', 'closed'].filter(function(status) {return (status!=nextStatus && status!=view_status);});
         return (
             <div className="task">
             <ButtonToolbar>
-                <SplitButton bsStyle="default" title="Done" onClick={this.newStatusClick} onSelect={this.newStatusSelect} >
-                    <MenuItem eventKey="backlog">backlog</MenuItem>
-                    <MenuItem eventKey="in process">in process</MenuItem>
-                    <MenuItem eventKey="hold">hold</MenuItem>
+                <SplitButton bsStyle="default" title={statusCaption(this.nextStatus())} onClick={this.newStatusClick} onSelect={this.newStatusSelect} >
+                {otherStatuses.map(function(status){
+                    return <MenuItem eventKey={status}>{statusCaption(status)}</MenuItem>;
+                })}
                 </SplitButton>
                 <Button bsStyle="default" onClick={this.handleDelete}>Delete</Button>
             </ButtonToolbar>
@@ -172,6 +186,7 @@ var TodoList = React.createClass({
                         description={task.fields.description} 
                         date_created={task.fields.date_created} 
                         status={task.fields.status}
+                        view_status={self.state.view_status}
                         onItemStatusUpdated={self.itemStatusUpdated}
                         onItemDeleted={self.handleTaskDeleted}
                         id={task.pk} 
