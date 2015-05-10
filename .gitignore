@@ -4,3 +4,9 @@
 /bower_components/
 /static/
 /env
+/build/
+/gulpfile.js
+/*.sublime-project
+/*.sublime-workspace
+/node_modules/
+

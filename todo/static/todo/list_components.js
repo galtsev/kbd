@@ -13,28 +13,6 @@ var DropdownButton = ReactBootstrap.DropdownButton;
 var SplitButton = ReactBootstrap.SplitButton;
 var MenuItem = ReactBootstrap.MenuItem;
 var Input = ReactBootstrap.Input;
-console.log(Input);
-
-var Dropdown = React.createClass({
-    render: function() {
-        return (
-            <div className="btn-group">
-                <button className="btn btn-default dropdown-toggle" data-toggle="dropdown">{ this.props.caption } <span className="caret"></span></button>
-                <ul className="dropdown-menu" onClick={this.props.onSelect} role="menu">
-                {this.props.children}
-                </ul>
-            </div>
-        );
-    }
-});
-
-Dropdown.Item = React.createClass({
-    render: function() {
-        return (
-            <li><a href="#" data-value={this.props.value}>{this.props.children}</a></li>
-        );
-    }
-});
 
 function upFirst(s) {
     return s.charAt(0).toUpperCase()+s.slice(1).toLowerCase();
@@ -45,25 +23,14 @@ function statusCaption(status) {
 }
 
 var TodoItem = React.createClass({
-    handleStatusClick: function(event) {
-        var self=this;
-        var value = $(event.target).data('value');
-        srv.set_status(this.props.id, value).then(function() {
-            self.props.onItemStatusUpdated(self.props.id, value);
-        });
-    },
     handleDelete: function(event) {
-        srv.delete_task(this.props.id).then(function() {
-            this.props.onItemDeleted(this.props.id);
-        }.bind(this));
+        storage.emit('delete_item', this.props.id);
     },
     newStatusClick: function(event) {
         this.newStatusSelect(this.nextStatus());
     },
     newStatusSelect: function(status) {
-        srv.set_status(this.props.id, status).then(function() {
-            this.props.onItemStatusUpdated(this.props.id, status);
-        }.bind(this));
+        storage.emit('update_item_status', {id: this.props.id, new_status: status});
     },
     nextStatus: function() {
         return this.props.status=='in process'?'closed':'in process';
@@ -91,7 +58,8 @@ var TodoItem = React.createClass({
 
 var Toolbar = React.createClass({
     newSelect: function(status) {
-        this.props.updateStatus({status: status, search_value: this.refs.search_value.getValue()});
+        //this.props.updateStatus({status: status, search_value: this.refs.search_value.getValue()});
+        storage.emit('view_status_changed', {status: status, search_value: this.refs.search_value.getValue()});
     },
     render: function() {
         var view_options = ['all', 'backlog', 'in process', 'hold', 'closed'];
@@ -114,10 +82,8 @@ var AppendForm = React.createClass({
             status: this.refs.status.getDOMNode().value,
             description: this.refs.description.getDOMNode().value
         };
-        srv.add_todo(data).then(function(items) {
-            this.refs.description.getDOMNode().value='';
-            this.props.afterAppend(items[0]);
-        }.bind(this));
+        storage.emit('item_append', data);
+        React.findDOMNode(this.refs.description).value='';
     },
     render: function() {
         return (
@@ -141,7 +107,7 @@ var AppendForm = React.createClass({
     }
 });
 
-var TodoList = React.createClass({
+var TodoPage = React.createClass({
     getInitialState: function() {
         return {
             view_status: 'in process',
@@ -153,13 +119,19 @@ var TodoList = React.createClass({
         srv.get_list(this.state.view_status).then(function(data){
             self.setState({todos:data});
         });
+        storage.on('delete_item', this.handleTaskDeleted);
+        storage.on('update_item_status', this.itemStatusUpdated);
+        storage.on('view_status_changed', this.handleStatusUpdate);
+        storage.on('item_append', this.handleTaskAppended);
     },
-    itemStatusUpdated: function(id, new_status) {
+    itemStatusUpdated: function(data) {
         var self = this;
         var pred = function(todo){
-            return self.state.view_status=='all' || new_status==self.state.view_status || todo.pk!=id;
+            return self.state.view_status=='all' || data.new_status==self.state.view_status || todo.pk!=data.id;
         }
-        this.setState({todos:this.state.todos.filter(pred)});
+        srv.set_status(data.id, data.new_status).then(function() {
+            this.setState({todos:this.state.todos.filter(pred)});
+        }.bind(this));
     },
     handleStatusUpdate: function(options){
         console.log("handleStatusUpdate called");
@@ -168,13 +140,16 @@ var TodoList = React.createClass({
             self.setState({todos:data, view_status: options.status});
         });
     },
-    handleTaskAppended: function(task) {
-        console.log(task, typeof task);
-        if (task.fields.status==this.state.view_status || this.state.view_status=='all')
-            this.setState({todos: [task].concat(this.state.todos)});
+    handleTaskAppended: function(data) {
+        srv.add_todo(data).then(function(items){
+            if (data.status==this.state.view_status || this.state.view_status=='all')
+                this.setState({todos: items.concat(this.state.todos)});
+        }.bind(this));
     },
     handleTaskDeleted: function(id) {
-        this.setState({todos: this.state.todos.filter(function(todo){return todo.pk!=id;})});
+        srv.delete_task(id).then(function() {
+            this.setState({todos: this.state.todos.filter(function(todo){return todo.pk!=id;})});
+        }.bind(this));
     },
     render: function() {
         var self = this;
@@ -184,15 +159,13 @@ var TodoList = React.createClass({
                         date_created={task.fields.date_created} 
                         status={task.fields.status}
                         view_status={self.state.view_status}
-                        onItemStatusUpdated={self.itemStatusUpdated}
-                        onItemDeleted={self.handleTaskDeleted}
                         id={task.pk} 
                         key={task.pk} />;
         });
         return (
             <div>
-                <Toolbar view_status={this.state.view_status} updateStatus={this.handleStatusUpdate} />
-                <AppendForm afterAppend={this.handleTaskAppended} />
+                <Toolbar view_status={this.state.view_status} />
+                <AppendForm />
                 { items }
             </div>
         );

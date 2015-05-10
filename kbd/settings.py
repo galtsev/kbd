@@ -18,11 +18,13 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 BOWER_BASE = os.path.join(BASE_DIR, 'bower_components')
 STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'build', 'static'),
     ('jquery', os.path.join(BOWER_BASE, 'jquery', 'dist')),
     ('bootstrap', os.path.join(BOWER_BASE, 'bootstrap', 'dist')),
     ('reactjs', os.path.join(BOWER_BASE, 'react')),
-    ('react-router', os.path.join(BOWER_BASE, 'react-router', 'build', 'umd')),
+    #('react-router', os.path.join(BOWER_BASE, 'react-router', 'build', 'umd')),
     ('react-bootstrap', os.path.join(BOWER_BASE, 'react-bootstrap')),
+
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static', 'static')
 #defaults
