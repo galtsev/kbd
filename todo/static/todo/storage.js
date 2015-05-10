@@ -1,7 +1,8 @@
 
 var EventEmitter = require('events').EventEmitter;
 var assert = require('assert');
-var util = require('./util.js');
+var util = require('./util');
+var srv = require('./server').srv;
 
 //dispatcher = new EventEmitter();
 

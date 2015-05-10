@@ -156,3 +156,7 @@ var TodoPage = React.createClass({
         );
     }
 });
+
+function render_root() {
+    React.render(<TodoPage />, document.getElementById('list'));
+}

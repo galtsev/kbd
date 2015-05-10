@@ -1,4 +1,5 @@
 
 window.React = require('react');
 window.ReactBootstrap = require('react-bootstrap');
-console.log('libs loaded', 'React' in window);
+window.jQuery = require('jquery');
+console.log('libs loaded', 'jQuery' in window);

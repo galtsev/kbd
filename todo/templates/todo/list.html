@@ -2,9 +2,8 @@
 {% load static %}
 {% block head %}
     <link rel="stylesheet" href="{% static 'todo/todo_list.css' %}" />
-    <script src="{% static 'todo/todo_list.js' %}" ></script>
-    <script src="{% static 'js/storage.js' %}" ></script>
-    <script type="text/jsx;harmony=true" src="{% static 'todo/list_components.js' %}" ></script>
+    <script src="{% static 'todo/js/storage.js' %}" ></script>
+    <script src="{% static 'todo/js/list_components.js' %}"></script>
 {% endblock %}
 
 {% block body %}
@@ -12,8 +11,8 @@
         <h2>My React todo list</h2>
         <div id="list"></div>
     </div>
-    <script type="text/jsx">
-        React.render(<TodoPage />, document.getElementById('list'));
+    <script>
+        render_root();
     </script>
     </div>
 {% endblock %}

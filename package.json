@@ -1,0 +1,20 @@
+{
+  "name": "kbd",
+  "version": "0.1.0",
+  "description": "private project to learn django, node, react and so",
+  "repository": {
+    "type": "git",
+    "url": "galtsev/nosuchrepo"
+  },
+  "dependencies": {
+    "bootstrap": "^3.3.4",
+    "jquery": "^2.1.4",
+    "react": "^0.13.3",
+    "react-bootstrap": "^0.21.2"
+  },
+  "devDependencies": {
+    "gulp": "^3.8.11",
+    "gulp-browserify": "^0.5.1",
+    "gulp-jsx": "^1.0.1"
+  }
+}

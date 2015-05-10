@@ -8,7 +8,7 @@ Server.prototype = {
         var self = this;
         return new Promise(function(resolve, reject){
             if (typeof data=="object") data = JSON.stringify(data);
-            $.post(self.api_base+url, data)
+            jQuery.post(self.api_base+url, data)
                 .done(function(response_data, textStatus, jqXHR){
                     if (jqXHR.status==200) {
                         resolve(response_data);
@@ -26,7 +26,7 @@ Server.prototype = {
         console.log('get_promise with data: ', data);
         var self = this;
         return new Promise(function(resolve, reject) {
-            $.get(self.api_base+url, data)
+            jQuery.get(self.api_base+url, data)
                 .done(function(response_data) {
                     resolve(response_data);
                 })
@@ -50,5 +50,5 @@ Server.prototype = {
 
 }
 
-var srv = new Server('/todo/');
+exports.srv = new Server('/todo/');
 
