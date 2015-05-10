@@ -24,13 +24,13 @@ function statusCaption(status) {
 
 var TodoItem = React.createClass({
     handleDelete: function(event) {
-        storage.emit('delete_item', this.props.id);
+        dispatcher.emit('delete_item', this.props.id);
     },
     newStatusClick: function(event) {
         this.newStatusSelect(this.nextStatus());
     },
     newStatusSelect: function(status) {
-        storage.emit('update_item_status', {id: this.props.id, new_status: status});
+        dispatcher.emit('update_item_status', {id: this.props.id, new_status: status});
     },
     nextStatus: function() {
         return this.props.status=='in process'?'closed':'in process';
@@ -59,7 +59,7 @@ var TodoItem = React.createClass({
 var Toolbar = React.createClass({
     newSelect: function(status) {
         //this.props.updateStatus({status: status, search_value: this.refs.search_value.getValue()});
-        storage.emit('view_status_changed', {status: status, search_value: this.refs.search_value.getValue()});
+        dispatcher.emit('view_status_changed', {status: status, search_value: this.refs.search_value.getValue()});
     },
     render: function() {
         var view_options = ['all', 'backlog', 'in process', 'hold', 'closed'];
@@ -82,7 +82,7 @@ var AppendForm = React.createClass({
             status: this.refs.status.getDOMNode().value,
             description: this.refs.description.getDOMNode().value
         };
-        storage.emit('item_append', data);
+        dispatcher.emit('item_append', data);
         React.findDOMNode(this.refs.description).value='';
     },
     render: function() {
@@ -107,6 +107,26 @@ var AppendForm = React.createClass({
     }
 });
 
+const TodoList = React.createClass({
+    render: function() {
+        var items = this.props.todos.map(function(task) {
+            return <TodoItem 
+                        description={task.fields.description} 
+                        date_created={task.fields.date_created} 
+                        status={task.fields.status}
+                        view_status={this.props.view_status}
+                        id={task.pk} 
+                        key={task.pk} />;
+        }.bind(this));
+        return (
+            <div>
+            {items}
+            </div>
+        );
+
+    }
+});
+
 var TodoPage = React.createClass({
     getInitialState: function() {
         return {
@@ -115,58 +135,23 @@ var TodoPage = React.createClass({
         };
     },
     componentDidMount: function() {
-        var self=this;
-        srv.get_list(this.state.view_status).then(function(data){
-            self.setState({todos:data});
-        });
-        storage.on('delete_item', this.handleTaskDeleted);
-        storage.on('update_item_status', this.itemStatusUpdated);
-        storage.on('view_status_changed', this.handleStatusUpdate);
-        storage.on('item_append', this.handleTaskAppended);
+        dispatcher.emit('initial_load');
+        storage.on('update', this.storageUpdated);
     },
-    itemStatusUpdated: function(data) {
-        var self = this;
-        var pred = function(todo){
-            return self.state.view_status=='all' || data.new_status==self.state.view_status || todo.pk!=data.id;
-        }
-        srv.set_status(data.id, data.new_status).then(function() {
-            this.setState({todos:this.state.todos.filter(pred)});
-        }.bind(this));
-    },
-    handleStatusUpdate: function(options){
-        console.log("handleStatusUpdate called");
-        var self=this;
-        srv.get_list(options).then(function(data){
-            self.setState({todos:data, view_status: options.status});
-        });
-    },
-    handleTaskAppended: function(data) {
-        srv.add_todo(data).then(function(items){
-            if (data.status==this.state.view_status || this.state.view_status=='all')
-                this.setState({todos: items.concat(this.state.todos)});
-        }.bind(this));
-    },
-    handleTaskDeleted: function(id) {
-        srv.delete_task(id).then(function() {
-            this.setState({todos: this.state.todos.filter(function(todo){return todo.pk!=id;})});
-        }.bind(this));
+    storageUpdated: function() {
+        s = storage.state;
+        new_state = {
+            view_status: s.status,
+            todos: s.todos
+        };
+        this.setState(new_state);
     },
     render: function() {
-        var self = this;
-        var items = this.state.todos.map(function(task) {
-            return <TodoItem 
-                        description={task.fields.description} 
-                        date_created={task.fields.date_created} 
-                        status={task.fields.status}
-                        view_status={self.state.view_status}
-                        id={task.pk} 
-                        key={task.pk} />;
-        });
         return (
             <div>
                 <Toolbar view_status={this.state.view_status} />
                 <AppendForm />
-                { items }
+                <TodoList todos={this.state.todos} view_status={this.state.view_status} />
             </div>
         );
     }
