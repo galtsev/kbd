@@ -26,16 +26,16 @@ function statusCaption(status) {
 var TodoItem = React.createClass({
     mixins: [StorageMixin],
     handleDelete: function(event) {
-        this.emit('delete_item', this.props.id);
+        this.emit('delete_item', this.props.task.pk);
     },
     newStatusClick: function(event) {
         this.newStatusSelect(this.nextStatus());
     },
     newStatusSelect: function(status) {
-        this.emit('update_item_status', {id: this.props.id, new_status: status});
+        this.emit('update_item_status', {id: this.props.task.pk, new_status: status});
     },
     nextStatus: function() {
-        return this.props.status=='in process'?'closed':'in process';
+        return this.props.task.fields.status=='in process'?'closed':'in process';
     },
     render: function() {
         var otherStatuses = ['backlog','in process', 'hold', 'closed'].filter(status => status!=this.nextStatus() && status!=this.props.view_status);
@@ -47,10 +47,10 @@ var TodoItem = React.createClass({
                 </SplitButton>
                 <Button bsStyle="default" onClick={this.handleDelete}>Delete</Button>
             </ButtonToolbar>
-            <div className="description">{this.props.description}</div>
+            <div className="description">{this.props.task.fields.description}</div>
             <div className="attrs">
-                <span className="float_left">{ fmt_date(this.props.date_created) }</span>
-                <span className="float_right">{this.props.status }</span>
+                <span className="float_left">{ fmt_date(this.props.task.fields.date_updated) }</span>
+                <span className="float_right">{this.props.task.fields.status }</span>
             </div>
             <div className="clear_both;"></div>
         </div>
@@ -117,11 +117,8 @@ const TodoList = React.createClass({
     render: function() {
         var items = this.props.todos.map(function(task) {
             return <TodoItem 
-                        description={task.fields.description} 
-                        date_created={task.fields.date_created} 
-                        status={task.fields.status}
+                        task={task}
                         view_status={this.props.view_status}
-                        id={task.pk} 
                         key={task.pk} />;
         }.bind(this));
         return (
