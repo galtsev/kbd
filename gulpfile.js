@@ -31,4 +31,8 @@ gulp.task('clean', function(cb) {
     del(['./dist', './build'], cb)
 });
 
+gulp.task('watch', function() {
+    gulp.watch('./todo/static/todo/{js,jsx}/*.js', ['bundle']);
+});
+
 gulp.task('build', ['bundle-libs', 'bundle']);
