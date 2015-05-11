@@ -26,13 +26,13 @@ function statusCaption(status) {
 var TodoItem = React.createClass({
     mixins: [StorageMixin],
     handleDelete: function(event) {
-        this.dispatcher().emit('delete_item', this.props.id);
+        this.emit('delete_item', this.props.id);
     },
     newStatusClick: function(event) {
         this.newStatusSelect(this.nextStatus());
     },
     newStatusSelect: function(status) {
-        this.dispatcher().emit('update_item_status', {id: this.props.id, new_status: status});
+        this.emit('update_item_status', {id: this.props.id, new_status: status});
     },
     nextStatus: function() {
         return this.props.status=='in process'?'closed':'in process';
@@ -61,7 +61,7 @@ var TodoItem = React.createClass({
 var Toolbar = React.createClass({
     mixins: [StorageMixin],
     newSelect: function(status) {
-        this.dispatcher().emit('view_status_changed', {status: status, search_value: this.refs.search_value.getValue()});
+        this.emit('view_status_changed', {status: status, search_value: this.refs.search_value.getValue()});
     },
     render: function() {
         var view_options = ['all', 'backlog', 'in process', 'hold', 'closed'];
@@ -88,7 +88,7 @@ var AppendForm = React.createClass({
             status: this.refs.status.getDOMNode().value,
             description: this.refs.description.getDOMNode().value
         };
-        this.dispatcher().emit('item_append', data);
+        this.emit('item_append', data);
         React.findDOMNode(this.refs.description).value='';
     },
     render: function() {
@@ -142,7 +142,7 @@ var TodoPage = React.createClass({
         };
     },
     componentDidMount: function() {
-        this.dispatcher().emit('initial_load');
+        this.emit('initial_load');
         //storage.on('update', this.storageUpdated);
     },
     storageUpdated: function() {

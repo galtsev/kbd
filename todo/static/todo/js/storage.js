@@ -59,8 +59,8 @@ exports.StorageMixin = {
     storage: function() {
         return storage;
     },
-    dispatcher: function() {
-        return storage;
+    emit: function(event, options) {
+        storage.emit(event, options);
     },
     componentWillMount: function() {
         if (this.storageUpdated) {
