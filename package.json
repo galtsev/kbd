@@ -15,6 +15,6 @@
   "devDependencies": {
     "gulp": "^3.8.11",
     "gulp-browserify": "^0.5.1",
-    "gulp-jsx": "^1.0.1"
+    "gulp-jsxtransform": "^0.1.1"
   }
 }
