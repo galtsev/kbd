@@ -8,10 +8,6 @@ var srv = require('./server').srv;
 
 storage = new EventEmitter();
 
-//window.dispatcher = dispatcher;
-window.dispatcher = storage;
-window.storage = storage;
-
 storage.state = {
     status: 'in process',
     todos: []
@@ -58,3 +54,24 @@ storage.on('delete_item', function(id) {
         this.emit('update');
     }.bind(this));
 });
+
+exports.StorageMixin = {
+    storage: function() {
+        return storage;
+    },
+    dispatcher: function() {
+        return storage;
+    },
+    componentWillMount: function() {
+        if (this.storageUpdated) {
+            storage.on('update', this.storageUpdated);
+        }
+    },
+    componentWillUnmount: function() {
+        if (this.storageUpdated) {
+            storage.removeListener('update', this.storageUpdated);
+        }
+    }
+
+}
+

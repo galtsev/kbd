@@ -1,3 +1,4 @@
+const StorageMixin = require('./storage').StorageMixin;
 
 function f2(i) {
     return (i<10?'0':'')+i.toString();
@@ -23,14 +24,15 @@ function statusCaption(status) {
 }
 
 var TodoItem = React.createClass({
+    mixins: [StorageMixin],
     handleDelete: function(event) {
-        dispatcher.emit('delete_item', this.props.id);
+        this.dispatcher().emit('delete_item', this.props.id);
     },
     newStatusClick: function(event) {
         this.newStatusSelect(this.nextStatus());
     },
     newStatusSelect: function(status) {
-        dispatcher.emit('update_item_status', {id: this.props.id, new_status: status});
+        this.dispatcher().emit('update_item_status', {id: this.props.id, new_status: status});
     },
     nextStatus: function() {
         return this.props.status=='in process'?'closed':'in process';
@@ -57,9 +59,10 @@ var TodoItem = React.createClass({
 });
 
 var Toolbar = React.createClass({
+    mixins: [StorageMixin],
     newSelect: function(status) {
         //this.props.updateStatus({status: status, search_value: this.refs.search_value.getValue()});
-        dispatcher.emit('view_status_changed', {status: status, search_value: this.refs.search_value.getValue()});
+        this.dispatcher().emit('view_status_changed', {status: status, search_value: this.refs.search_value.getValue()});
     },
     render: function() {
         var view_options = ['all', 'backlog', 'in process', 'hold', 'closed'];
@@ -77,12 +80,13 @@ var Toolbar = React.createClass({
 });
 
 var AppendForm = React.createClass({
+    mixins: [StorageMixin],
     handleSubmit: function() {
         var data = {
             status: this.refs.status.getDOMNode().value,
             description: this.refs.description.getDOMNode().value
         };
-        dispatcher.emit('item_append', data);
+        this.dispatcher().emit('item_append', data);
         React.findDOMNode(this.refs.description).value='';
     },
     render: function() {
@@ -92,7 +96,7 @@ var AppendForm = React.createClass({
                     <textarea ref="description" cols="60" rows="10"></textarea>
                 </div>
                 <div>
-                    <select ref="status" defaultValue="in process">
+                    <select ref="status" defaultValue={this.props.view_status}>
                         <option value="in process">in process</option>
                         <option value="backlog">backlog</option>
                         <option value="hold">hold</option>
@@ -128,6 +132,7 @@ const TodoList = React.createClass({
 });
 
 var TodoPage = React.createClass({
+    mixins: [StorageMixin],
     getInitialState: function() {
         return {
             view_status: 'in process',
@@ -135,11 +140,11 @@ var TodoPage = React.createClass({
         };
     },
     componentDidMount: function() {
-        dispatcher.emit('initial_load');
-        storage.on('update', this.storageUpdated);
+        this.dispatcher().emit('initial_load');
+        //storage.on('update', this.storageUpdated);
     },
     storageUpdated: function() {
-        s = storage.state;
+        s = this.storage().state;
         new_state = {
             view_status: s.status,
             todos: s.todos
@@ -150,13 +155,13 @@ var TodoPage = React.createClass({
         return (
             <div>
                 <Toolbar view_status={this.state.view_status} />
-                <AppendForm />
+                <AppendForm view_status={this.state.view_status} />
                 <TodoList todos={this.state.todos} view_status={this.state.view_status} />
             </div>
         );
     }
 });
 
-function render_root() {
+exports.render_root = function() {
     React.render(<TodoPage />, document.getElementById('list'));
 }
