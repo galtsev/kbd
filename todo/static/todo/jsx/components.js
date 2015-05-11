@@ -61,7 +61,6 @@ var TodoItem = React.createClass({
 var Toolbar = React.createClass({
     mixins: [StorageMixin],
     newSelect: function(status) {
-        //this.props.updateStatus({status: status, search_value: this.refs.search_value.getValue()});
         this.dispatcher().emit('view_status_changed', {status: status, search_value: this.refs.search_value.getValue()});
     },
     render: function() {
@@ -81,6 +80,9 @@ var Toolbar = React.createClass({
 
 var AppendForm = React.createClass({
     mixins: [StorageMixin],
+    storageUpdated: function(){
+        React.findDOMNode(this.refs.status).value = this.storage().state.status;
+    },
     handleSubmit: function() {
         var data = {
             status: this.refs.status.getDOMNode().value,
